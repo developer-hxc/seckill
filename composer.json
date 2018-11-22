@@ -1,0 +1,17 @@
+{
+    "name": "hxc/sec-kill",
+    "description": "tp3-redis订单秒杀",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "韩韩韩",
+            "email": "3365997294@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload":{
+        "psr-4":{
+            "HXC\\":"src/"
+        }
+    }
+}

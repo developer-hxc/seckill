@@ -1,0 +1,6 @@
+/vendor/
+test.php
+/key/
+.idea/
+composer.lock
+test.php
