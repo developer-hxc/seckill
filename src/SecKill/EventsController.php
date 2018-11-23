@@ -23,7 +23,8 @@ Trait EventsController
         if(!$redis->exists("{$key}_stock")){
             return ['code' => 0,'msg' => '秒杀商品不存在'];
         }
-        if($redis->scard($key) >= $redis->get("{$key}_stock")){
+        //此处+1是因为创建对应集合时有一个默认成员
+        if($redis->scard($key) >= ($redis->get("{$key}_stock")+1)){
             return ['code' => 0,'msg' => '商品已被抢空'];
         }
         $res = $redis->sadd($key,$params['uid']);
@@ -34,18 +35,26 @@ Trait EventsController
         }
     }
 
-    public function test()
-    {
-//        return self::$redis->get('SecKill_goods_1_stock');
-        return self::$redis->keys('*');
-    }
-
     /**
      * 关闭秒杀
+     * @param $gid 关闭单个商品的秒杀
      */
-    public function close()
+    public function close($gid = '')
     {
-        self::$redis->flushall();
-        return ['code' => 1,'msg' => '秒杀已关闭'];
+        $redis = self::$redis;
+        if($gid){
+            $key = self::$prefix."goods_{$gid}";
+            if($redis->exists($key)){//秒杀存在
+                $redis->del($key);
+                $redis->del($key.'_stock');
+                return ['code' => 1,'msg' => '该商品秒杀已关闭'];
+            }else{
+                return ['code' => 0,'msg' => '秒杀商品不存在'];
+            }
+        }else{
+            $redis->flushall();
+            return ['code' => 1,'msg' => '秒杀全部关闭'];
+        }
+            
     }
 }

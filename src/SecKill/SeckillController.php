@@ -42,7 +42,10 @@ class SeckillController
         if(!$connect) throw_exception('redis链接失败');
         self::$redis  = $redis;
         foreach ($goods as $k => $v){
-            $redis->set(self::$prefix."goods_{$v['id']}_stock",$v['num']);
+            $redis->set(self::$prefix."goods_{$v['id']}",0); //创建默认集合
+            $redis->set(self::$prefix."goods_{$v['id']}_stock",$v['num']); //创建产品库存
+            $redis->expire(self::$prefix."goods_{$v['id']}_stock",$v['expire']); //设置key有效期
+            $redis->expire(self::$prefix."goods_{$v['id']}",$v['expire']); //设置key有效期
         }
         return ['code' => 1,'msg' => '秒杀开启成功'];
     }
